@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "betterpreview",
+  "version": "${version}",
+  "name": "BetterPreview",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "GPL-3.0",
+  "icon": "assets/betterpreview/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.tisawesomeness.betterpreview.client.BetterPreviewClient"
+    ],
+    "main": [
+      "com.tisawesomeness.betterpreview.BetterPreview"
+    ]
+  },
+  "mixins": [
+    "betterpreview.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.8",
+    "fabric": "*",
+    "minecraft": "1.19"
+  }
+}
