@@ -8,10 +8,10 @@
   "contact": {},
   "license": "GPL-3.0",
   "icon": "assets/betterpreview/icon.png",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
     "client": [
-      "com.tisawesomeness.betterpreview.client.BetterPreviewClient"
+      "com.tisawesomeness.betterpreview.BetterPreviewClient"
     ],
     "main": [
       "com.tisawesomeness.betterpreview.BetterPreview"

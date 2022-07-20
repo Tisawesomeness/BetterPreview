@@ -1,6 +1,6 @@
 package com.tisawesomeness.betterpreview.mixin;
 
-import com.tisawesomeness.betterpreview.client.BetterPreviewClient;
+import com.tisawesomeness.betterpreview.BetterPreviewClient;
 
 import net.minecraft.client.network.ChatPreviewer;
 import net.minecraft.text.Text;
@@ -11,12 +11,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ChatPreviewer.class)
 public class ChatPreviewerMixin {
+
+    // Replace the chat preview text with the one from the mod
     @Inject(method = "getPreviewText", at = @At("HEAD"), cancellable = true)
     private void getPreviewText(CallbackInfoReturnable<Text> cir) {
         cir.setReturnValue(BetterPreviewClient.getPreview());
     }
+
+    // Always render preview
     @Inject(method = "shouldRenderPreview", at = @At("HEAD"), cancellable = true)
     private void shouldRenderPreview(CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(true);
     }
+
 }
