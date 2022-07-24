@@ -1,6 +1,8 @@
 package com.tisawesomeness.betterpreview;
 
 import com.tisawesomeness.betterpreview.format.ChatFormatter;
+import com.tisawesomeness.betterpreview.format.ClassicFormatter;
+import com.tisawesomeness.betterpreview.format.FormatterRegistry;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -23,14 +25,14 @@ public class BetterPreview implements ModInitializer {
     }
     private void sendFormatterToClient(ServerPlayNetworkHandler serverPlayNetworkHandler, PacketSender packetSender, MinecraftServer minecraftServer) {
         var buf = PacketByteBufs.create();
-        buildFormatter().write(buf);
+        FormatterRegistry.write(buf, buildFormatter());
         packetSender.sendPacket(CHANNEL, buf);
     }
     // Dummy example for now
     private ChatFormatter buildFormatter() {
         var allowedFormatting = EnumSet.range(Formatting.BLACK, Formatting.WHITE);
         allowedFormatting.add(Formatting.RESET);
-        return new ChatFormatter('&', allowedFormatting);
+        return new ClassicFormatter('&', allowedFormatting);
     }
 
 }

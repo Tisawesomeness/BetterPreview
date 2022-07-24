@@ -1,6 +1,8 @@
 package com.tisawesomeness.betterpreview;
 
 import com.tisawesomeness.betterpreview.format.ChatFormatter;
+import com.tisawesomeness.betterpreview.format.FormatterRegistry;
+import com.tisawesomeness.betterpreview.format.NopFormatter;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -18,6 +20,8 @@ import javax.annotation.Nullable;
 @Environment(EnvType.CLIENT)
 public class BetterPreviewClient implements ClientModInitializer {
 
+    private static final ChatFormatter defaultFormatter = new NopFormatter();
+
     private static @Nullable ChatFormatter chatFormatter;
     private static String rawPreviewInput = "";
 
@@ -27,7 +31,7 @@ public class BetterPreviewClient implements ClientModInitializer {
         ClientPlayConnectionEvents.DISCONNECT.register(BetterPreviewClient::disableFormatter);
     }
     private void receiveFormatter(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
-        chatFormatter = new ChatFormatter(packetByteBuf);
+        chatFormatter = FormatterRegistry.read(packetByteBuf).orElse(null);
     }
     private static void disableFormatter(ClientPlayNetworkHandler clientPlayNetworkHandler, MinecraftClient minecraftClient) {
         chatFormatter = null;
@@ -37,7 +41,8 @@ public class BetterPreviewClient implements ClientModInitializer {
         rawPreviewInput = rawInput;
     }
     public static Text getPreview() {
-        return chatFormatter == null ? Text.literal(rawPreviewInput) : chatFormatter.format(rawPreviewInput);
+        var formatter = chatFormatter == null ? defaultFormatter : chatFormatter;
+        return formatter.format(rawPreviewInput);
     }
 
 }
