@@ -1,6 +1,6 @@
-package com.tisawesomeness.betterpreview.mixin;
+package com.tisawesomeness.betterpreview.fabric.mixin;
 
-import com.tisawesomeness.betterpreview.BetterPreviewClient;
+import com.tisawesomeness.betterpreview.BetterPreview;
 
 import net.minecraft.client.gui.screen.ChatScreen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +15,7 @@ public class ChatScreenMixin {
     @Inject(method = "updatePreviewer", at = @At("HEAD"), cancellable = true)
     private void getPreviewText(String chatText, CallbackInfo ci) {
         String normalized = ((ChatScreen) (Object) this).normalize(chatText);
-        BetterPreviewClient.pushPreview(normalized);
+        BetterPreview.updateChatInput(normalized);
         ci.cancel(); // Don't request preview from server
     }
 

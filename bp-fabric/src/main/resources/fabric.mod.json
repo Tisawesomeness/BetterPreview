@@ -11,10 +11,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "com.tisawesomeness.betterpreview.BetterPreviewClient"
+      "com.tisawesomeness.betterpreview.fabric.BetterPreviewClient"
     ],
     "main": [
-      "com.tisawesomeness.betterpreview.BetterPreview"
+      "com.tisawesomeness.betterpreview.fabric.BetterPreviewFabric"
     ]
   },
   "mixins": [

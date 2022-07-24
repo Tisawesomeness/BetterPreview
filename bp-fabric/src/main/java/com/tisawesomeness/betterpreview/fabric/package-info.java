@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package com.tisawesomeness.betterpreview.fabric;
+
+import javax.annotation.ParametersAreNonnullByDefault;

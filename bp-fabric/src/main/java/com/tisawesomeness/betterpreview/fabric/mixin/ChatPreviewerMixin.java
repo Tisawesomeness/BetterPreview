@@ -1,6 +1,6 @@
-package com.tisawesomeness.betterpreview.mixin;
+package com.tisawesomeness.betterpreview.fabric.mixin;
 
-import com.tisawesomeness.betterpreview.BetterPreviewClient;
+import com.tisawesomeness.betterpreview.fabric.BetterPreviewClient;
 
 import net.minecraft.client.network.ChatPreviewer;
 import net.minecraft.text.Text;

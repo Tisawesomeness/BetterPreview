@@ -1,6 +1,6 @@
 package com.tisawesomeness.betterpreview.format;
 
-import net.minecraft.network.PacketByteBuf;
+import io.netty.buffer.ByteBuf;
 
 import java.util.*;
 
@@ -33,7 +33,7 @@ public class FormatterRegistry {
      * @param buf the buffer
      * @return the formatter, or empty if sent an invalid id
      */
-    public static Optional<ChatFormatter> read(PacketByteBuf buf) {
+    public static Optional<ChatFormatter> read(ByteBuf buf) {
         byte id = buf.readByte();
         assert formatters.size() <= Byte.MAX_VALUE;
         if (id >= formatters.size()) {
@@ -47,7 +47,7 @@ public class FormatterRegistry {
      * @param buf the buffer
      * @param formatter the formatter
      */
-    public static void write(PacketByteBuf buf, ChatFormatter formatter) {
+    public static void write(ByteBuf buf, ChatFormatter formatter) {
         byte id = formatterToId.get(formatter.getClass());
         buf.writeByte(id);
         formatter.write(buf);
@@ -55,7 +55,7 @@ public class FormatterRegistry {
 
     @FunctionalInterface
     private interface FormatterReader {
-        ChatFormatter read(PacketByteBuf buf);
+        ChatFormatter read(ByteBuf buf);
     }
 
 }

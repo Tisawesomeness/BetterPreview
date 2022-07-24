@@ -1,7 +1,7 @@
 package com.tisawesomeness.betterpreview.format;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.Text;
+import io.netty.buffer.ByteBuf;
+import net.kyori.adventure.text.Component;
 
 /**
  * Formatter that does nothing.
@@ -9,12 +9,12 @@ import net.minecraft.text.Text;
 public class NopFormatter implements ChatFormatter {
 
     @Override
-    public Text format(String rawInput) {
-        return Text.literal(rawInput);
+    public Component format(String rawInput) {
+        return Component.text(rawInput);
     }
 
     @Override
-    public void write(PacketByteBuf buf) {
+    public void write(ByteBuf buf) {
         // no-op
     }
 
