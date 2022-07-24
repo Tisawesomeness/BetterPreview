@@ -10,3 +10,4 @@ pluginManagement {
 
 include 'bp-core'
 include 'bp-fabric'
+include 'bp-spigot'
