@@ -1,7 +1,10 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     id 'bp-conventions'
     id 'fabric-loom' version '0.12-SNAPSHOT'
     id 'maven-publish'
+    id "com.github.johnrengelman.shadow" version "${shadow_version}"
 }
 
 repositories {
@@ -69,4 +72,25 @@ publishing {
         // The repositories here will be used for publishing your artifact, not for
         // retrieving dependencies.
     }
+}
+
+shadowJar {
+    dependencies {
+        exclude('net.fabricmc:.*')
+        include(project(':bp-core'))
+        exclude '/mappings/*'
+    }
+}
+
+task remappedShadowJar(type: RemapJarTask) {
+    dependsOn tasks.shadowJar
+    input.set(tasks.shadowJar.archiveFile)
+    addNestedDependencies.set(true)
+}
+
+tasks.assemble.dependsOn tasks.remappedShadowJar
+
+artifacts {
+    archives remappedShadowJar
+    shadow shadowJar
 }
