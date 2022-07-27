@@ -1,5 +1,6 @@
 name: BetterPreview
 version: '${version}'
+description: "Chat preview without the privacy concerns"
 main: com.tisawesomeness.betterpreview.spigot.BetterPreviewSpigot
 api-version: 1.19
 authors: [ Tis_awesomeness ]
