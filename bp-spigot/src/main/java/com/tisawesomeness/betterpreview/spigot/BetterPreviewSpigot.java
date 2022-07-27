@@ -1,23 +1,30 @@
 package com.tisawesomeness.betterpreview.spigot;
 
 import com.tisawesomeness.betterpreview.BetterPreview;
-import com.tisawesomeness.betterpreview.format.ChatFormatter;
-import com.tisawesomeness.betterpreview.format.ClassicFormatter;
 import com.tisawesomeness.betterpreview.format.FormatterRegistry;
+import com.tisawesomeness.betterpreview.spigot.adapter.EssentialsChatAdapter;
+import com.tisawesomeness.betterpreview.spigot.adapter.FormatAdapter;
 
 import io.netty.buffer.Unpooled;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 public class BetterPreviewSpigot extends JavaPlugin {
 
     public static final String CHANNEL = BetterPreview.CHANNEL.asString();
 
-    // Dummy example for now
-    private final ChatFormatter chatFormatter = new ClassicFormatter('&');
+    private @Nullable FormatAdapter adapter;
 
     @Override
     public void onEnable() {
+        boolean hasEssentialsChat = Bukkit.getPluginManager().getPlugin("EssentialsChat") != null;
+        if (hasEssentialsChat) {
+            adapter = new EssentialsChatAdapter();
+            getLogger().info("Found chat plugin: EssentialsChat");
+        }
+
         getServer().getMessenger().registerOutgoingPluginChannel(this, CHANNEL);
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
     }
@@ -28,13 +35,13 @@ public class BetterPreviewSpigot extends JavaPlugin {
     }
 
     public void sendFormatter(Player player) {
-        player.sendPluginMessage(this, CHANNEL, getFormatterData());
-    }
-    private byte[] getFormatterData() {
-        var buf = Unpooled.buffer();
-        FormatterRegistry.write(buf, chatFormatter);
-        assert buf.hasArray();
-        return buf.array();
+        if (adapter != null) {
+            var buf = Unpooled.buffer();
+            var formatter = adapter.buildChatFormatter(player);
+            FormatterRegistry.write(buf, formatter);
+            assert buf.hasArray();
+            player.sendPluginMessage(this, CHANNEL, buf.array());
+        }
     }
 
 }
