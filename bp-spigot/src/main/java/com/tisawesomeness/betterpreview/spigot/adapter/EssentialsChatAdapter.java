@@ -8,6 +8,7 @@ import com.tisawesomeness.betterpreview.spigot.Util;
 import org.bukkit.entity.Player;
 
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class EssentialsChatAdapter implements FormatAdapter {
@@ -21,7 +22,7 @@ public class EssentialsChatAdapter implements FormatAdapter {
     );
 
     @Override
-    public ChatFormatter buildChatFormatter(Player player) {
+    public Optional<ChatFormatter> buildChatFormatter(Player player) {
         var allowedFormatting = EnumSet.noneOf(ClassicFormat.class);
 
         if (Util.hasPermission(player, BASE_PERMISSION + ".color")) {
@@ -46,7 +47,7 @@ public class EssentialsChatAdapter implements FormatAdapter {
             allowedFormatting.add(ClassicFormat.MAGIC);
         }
 
-        return new ClassicFormatter('&', allowedFormatting);
+        return Optional.of(new ClassicFormatter('&', allowedFormatting));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.tisawesomeness.betterpreview.format;
 
+import io.netty.buffer.Unpooled;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -8,14 +9,24 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.EnumSet;
+import java.util.stream.Stream;
 
 import static com.tisawesomeness.betterpreview.ComponentAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ClassicFormatterTest {
 
     private static final ChatFormatter NORMAL = new ClassicFormatter('&');
+    private static final ChatFormatter NONE = new ClassicFormatter('&', EnumSet.noneOf(ClassicFormat.class));
+    private static final ChatFormatter COLORS_ONLY = new ClassicFormatter('&', ClassicFormat.ALL_COLOR_FORMATS);
+    private static final ChatFormatter SYMBOL_CHAR = new ClassicFormatter(ClassicFormatter.SYMBOL_CHAR);
+
+    private static Stream<ChatFormatter> formatterProvider() {
+        return Stream.of(NORMAL, NONE, COLORS_ONLY, SYMBOL_CHAR);
+    }
 
     @Test
     public void testNoFormatting() {
@@ -109,24 +120,29 @@ public class ClassicFormatterTest {
 
     @Test
     public void testNoneAllowed() {
-        var formatter = new ClassicFormatter('&', EnumSet.noneOf(ClassicFormat.class));
         String input = "&a&ktest";
-        assertThat(formatter.format(input)).isSimilarTo("&a&ktest");
+        assertThat(NONE.format(input)).isSimilarTo("&a&ktest");
     }
     @Test
     public void testOnlyColors() {
-        var formatter = new ClassicFormatter('&', ClassicFormat.ALL_COLOR_FORMATS);
         String input = "&a&ktest";
         var expected = Component.text("&ktest").color(NamedTextColor.GREEN);
-        assertThat(formatter.format(input)).isSimilarTo(expected);
+        assertThat(COLORS_ONLY.format(input)).isSimilarTo(expected);
     }
 
     @Test
     public void testSymbolChar() {
-        var formatter = new ClassicFormatter(ClassicFormatter.SYMBOL_CHAR);
         String input = ClassicFormatter.SYMBOL_CHAR + "6&3test";
         var expected = Component.text("&3test").color(NamedTextColor.GOLD);
-        assertThat(formatter.format(input)).isSimilarTo(expected);
+        assertThat(SYMBOL_CHAR.format(input)).isSimilarTo(expected);
+    }
+
+    @ParameterizedTest
+    @MethodSource("formatterProvider")
+    public void testReadWrite(ChatFormatter formatter) {
+        var buf = Unpooled.buffer();
+        formatter.write(buf);
+        assertThat(new ClassicFormatter(buf)).usingRecursiveComparison().isEqualTo(formatter);
     }
 
 }

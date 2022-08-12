@@ -3,6 +3,7 @@ package com.tisawesomeness.betterpreview.fabric;
 import com.tisawesomeness.betterpreview.BetterPreview;
 import com.tisawesomeness.betterpreview.format.FormatterRegistry;
 
+import lombok.extern.log4j.Log4j2;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,6 +16,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 
+@Log4j2
 @Environment(EnvType.CLIENT)
 public class BetterPreviewClient implements ClientModInitializer {
 
@@ -26,7 +28,11 @@ public class BetterPreviewClient implements ClientModInitializer {
         ClientPlayConnectionEvents.DISCONNECT.register(BetterPreviewClient::disableFormatter);
     }
     private void receiveFormatter(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
-        BetterPreview.setChatFormatter(FormatterRegistry.read(packetByteBuf).orElse(null));
+        try {
+            BetterPreview.setChatFormatter(FormatterRegistry.read(packetByteBuf).orElse(null));
+        } catch (IllegalArgumentException e) {
+            log.error(e);
+        }
     }
     private static void disableFormatter(ClientPlayNetworkHandler clientPlayNetworkHandler, MinecraftClient minecraftClient) {
         BetterPreview.setChatFormatter(null);

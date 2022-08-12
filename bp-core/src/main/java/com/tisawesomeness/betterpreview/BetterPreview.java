@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public class BetterPreview {
 
     public static final Key CHANNEL = Key.key("betterpreview", "formatter");
-    private static final ChatFormatter defaultFormatter = new NopFormatter();
+    private static final ChatFormatter backupFormatter = new NopFormatter();
 
     @Setter private static @Nullable ChatFormatter chatFormatter;
     private static String rawPreviewInput = "";
@@ -24,8 +24,13 @@ public class BetterPreview {
         rawPreviewInput = rawInput;
     }
     public static Component getPreview() {
-        var formatter = chatFormatter == null ? defaultFormatter : chatFormatter;
+        // Use backup no-op formatter just in case formatter was disabled
+        // between shouldRender check and getPreview call
+        var formatter = chatFormatter == null ? backupFormatter : chatFormatter;
         return formatter.format(rawPreviewInput).compact();
+    }
+    public static boolean shouldDisplayPreview() {
+        return chatFormatter != null;
     }
 
 }
