@@ -25,7 +25,7 @@ public class BetterPreview {
     }
     public static Component getPreview() {
         var formatter = chatFormatter == null ? defaultFormatter : chatFormatter;
-        return formatter.format(rawPreviewInput);
+        return formatter.format(rawPreviewInput).compact();
     }
 
 }

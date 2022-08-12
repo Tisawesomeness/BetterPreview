@@ -10,4 +10,5 @@ dependencies {
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'io.netty:netty-buffer:4.1.77.Final'
     implementation 'net.kyori:adventure-api:4.11.0'
+    testImplementation 'net.kyori:adventure-text-serializer-legacy:4.11.0'
 }
