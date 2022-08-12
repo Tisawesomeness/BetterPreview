@@ -1,7 +1,3 @@
-plugins {
-    id 'bp-conventions'
-}
-
 repositories {
     mavenCentral()
 }

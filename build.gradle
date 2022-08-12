@@ -1,4 +1,70 @@
+plugins {
+    id 'io.freefair.lombok' version '6.5.0.3' apply false
+}
+
 allprojects {
     group = 'com.tisawesomeness'
     version = '0.0.1'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+        testImplementation 'org.assertj:assertj-core:3.23.1'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    def targetJavaVersion = 17
+    tasks.withType(JavaCompile).configureEach {
+        // ensure that the encoding is set to UTF-8, no matter what the system default is
+        // this fixes some edge cases with special characters not displaying correctly
+        // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+        // If Javadoc is generated, this must be specified in that task too.
+        it.options.encoding = "UTF-8"
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
+        if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+            it.options.release = targetJavaVersion
+        }
+    }
+
+    java {
+        def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+        if (JavaVersion.current() < javaVersion) {
+            toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+        }
+    }
+}
+
+def outputTasks() {
+    [":bp-spigot:shadowJar", ":bp-fabric:remappedShadowJar"].stream().map({ tasks.findByPath(it) })
+}
+
+task copyToOutput(type: Copy) {
+    outputTasks().forEach {
+        from(it)
+    }
+
+    rename '(.*)-all.jar', '$1.jar'
+
+    into 'build/libs'
+}
+
+task cleanOutput() {
+    delete 'build/libs'
+}
+
+task clean() {
+    dependsOn cleanOutput
+}
+
+task build() {
+    dependsOn copyToOutput
 }

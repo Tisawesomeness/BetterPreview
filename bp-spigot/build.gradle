@@ -1,5 +1,4 @@
 plugins {
-    id 'bp-conventions'
     id "com.github.johnrengelman.shadow" version "${shadow_version}"
 }
 
@@ -34,4 +33,8 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+java {
+    archivesBaseName = rootProject.name + "-Spigot"
 }

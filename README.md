@@ -11,3 +11,7 @@ Must be installed on both client and server to work. Currently supports Fabric c
 - [EssentialsChat](https://essentialsx.net/)
 
 More to come
+
+## Building
+
+To build BetterPreview, run `gradle build`. The output jars are in the `build/libs` directory.
