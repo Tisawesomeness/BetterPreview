@@ -37,7 +37,12 @@ public class BetterPreviewSpigot extends JavaPlugin {
         // no-op
     }
 
-    public void sendFormatter(Player player) {
+    public void sendFormatterIfAllowed(Player player) {
+        if (Util.hasPermission(player, "betterpreview.preview")) {
+            sendFormatter(player);
+        }
+    }
+    private void sendFormatter(Player player) {
         var buf = Unpooled.buffer();
         FormatterRegistry.write(buf, getFormatter(player).orElse(null));
         assert buf.hasArray();

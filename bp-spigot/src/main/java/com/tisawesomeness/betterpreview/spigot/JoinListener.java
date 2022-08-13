@@ -14,7 +14,7 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onRegisterChannel(PlayerRegisterChannelEvent e) {
         if (BetterPreviewSpigot.CHANNEL.equals(e.getChannel())) {
-            plugin.sendFormatter(e.getPlayer());
+            plugin.sendFormatterIfAllowed(e.getPlayer());
         }
     }
 
