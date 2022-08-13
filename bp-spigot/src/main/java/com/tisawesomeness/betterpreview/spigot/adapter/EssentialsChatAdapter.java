@@ -49,6 +49,9 @@ public class EssentialsChatAdapter implements FormatAdapter {
 
         boolean rgb = Util.hasPermission(player, BASE_PERMISSION + ".rgb");
 
+        if (allowedFormatting.isEmpty() && !rgb) {
+            return Optional.empty();
+        }
         return Optional.of(new ClassicFormatter('&', allowedFormatting, rgb));
     }
 
