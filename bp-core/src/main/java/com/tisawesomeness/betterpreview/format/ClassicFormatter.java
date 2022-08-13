@@ -3,6 +3,7 @@ package com.tisawesomeness.betterpreview.format;
 import io.netty.buffer.ByteBuf;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -17,24 +18,26 @@ public class ClassicFormatter implements ChatFormatter {
     private final char colorSymbol;
     // stored as an integer bit field in the packet
     private final EnumSet<@NotNull ClassicFormat> allowedFormatting;
+    private final boolean rgbAllowed;
 
     /**
      * Creates a new formatter that allows all formatting codes.
      * @param colorSymbol the character used in formatting codes, such as "&" or "§"
      */
     public ClassicFormatter(char colorSymbol) {
-        this.colorSymbol = colorSymbol;
-        this.allowedFormatting = EnumSet.allOf(ClassicFormat.class);
+        this(colorSymbol, EnumSet.allOf(ClassicFormat.class), true);
     }
 
     /**
      * Creates a new formatter. Disallowed formatting codes will be left in the message without replacement.
      * @param colorSymbol the character used in formatting codes, such as "&" or "§"
      * @param allowedFormats set of allowed formats
+     * @param rgbAllowed whether to allow RGB codes
      */
-    public ClassicFormatter(char colorSymbol, EnumSet<ClassicFormat> allowedFormats) {
+    public ClassicFormatter(char colorSymbol, EnumSet<ClassicFormat> allowedFormats, boolean rgbAllowed) {
         this.colorSymbol = colorSymbol;
         this.allowedFormatting = allowedFormats;
+        this.rgbAllowed = rgbAllowed;
     }
 
     public ClassicFormatter(ByteBuf buf) {
@@ -46,6 +49,7 @@ public class ClassicFormatter implements ChatFormatter {
                 allowedFormatting.add(format);
             }
         }
+        rgbAllowed = buf.readBoolean();
     }
 
     // Adventure legacy serializer doesn't support enabling/disabling individual color codes
@@ -61,24 +65,40 @@ public class ClassicFormatter implements ChatFormatter {
             if (c == colorSymbol && i + 1 < rawInput.length()) {
 
                 char c2 = rawInput.charAt(i + 1);
-                var format = ClassicFormat.byCode(c2);
-                if (allowedFormatting.contains(format)) {
+                if (rgbAllowed && c2 == '#' && i + 7 < rawInput.length()) {
                     boolean isEscaped = i > 0 && rawInput.charAt(i - 1) == colorSymbol;
                     if (isEscaped) {
                         continue; // Start processing next character without including last "&" for escaping
                     }
-                    i++; // only consume second char if the formatting code is actually used
-                    textBuilder.append(Component.text(currentRun.toString()).style(style));
-                    assert format != null; // allowedFormatting cannot contain null
-                    style = format.apply(style);
-                    currentRun.setLength(0);
+                    String hex = rawInput.substring(i + 2, i + 8);
+                    try {
+                        int rgb = Integer.parseInt(hex, 16);
+                        i += 7;
+                        textBuilder.append(Component.text(currentRun.toString()).style(style));
+                        style = style.color(TextColor.color(rgb));
+                        currentRun.setLength(0);
+                        continue;
+                    } catch (NumberFormatException ignored) {
+                        // hex code not valid, keep processing as normal
+                    }
                 } else {
-                    currentRun.append(c);
+                    var format = ClassicFormat.byCode(c2);
+                    if (allowedFormatting.contains(format)) {
+                        boolean isEscaped = i > 0 && rawInput.charAt(i - 1) == colorSymbol;
+                        if (isEscaped) {
+                            continue; // Start processing next character without including last "&" for escaping
+                        }
+                        i++; // only consume second char if the formatting code is actually used
+                        textBuilder.append(Component.text(currentRun.toString()).style(style));
+                        assert format != null; // allowedFormatting cannot contain null
+                        style = format.apply(style);
+                        currentRun.setLength(0);
+                        continue;
+                    }
                 }
 
-            } else {
-                currentRun.append(c);
             }
+            currentRun.append(c);
         }
 
         textBuilder.append(Component.text(currentRun.toString()).style(style));
@@ -93,6 +113,7 @@ public class ClassicFormatter implements ChatFormatter {
             bitSet |= 1 << format.ordinal();
         }
         buf.writeInt(bitSet);
+        buf.writeBoolean(rgbAllowed);
     }
 
 }
