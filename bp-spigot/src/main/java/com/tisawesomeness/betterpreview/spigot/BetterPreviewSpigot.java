@@ -8,13 +8,19 @@ import com.tisawesomeness.betterpreview.spigot.adapter.FormatAdapter;
 
 import io.netty.buffer.Unpooled;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class BetterPreviewSpigot extends JavaPlugin {
+
+    private static final String PREFIX = ChatColor.GRAY + "[" + ChatColor.GREEN + "BP" +
+            ChatColor.GRAY + "]" + ChatColor.RESET + " ";
 
     public static final String CHANNEL = BetterPreview.CHANNEL.asString();
 
@@ -30,6 +36,7 @@ public class BetterPreviewSpigot extends JavaPlugin {
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, CHANNEL);
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
+        Objects.requireNonNull(getCommand("betterpreview")).setExecutor(new PreviewCommand(this));
     }
 
     @Override
@@ -37,12 +44,16 @@ public class BetterPreviewSpigot extends JavaPlugin {
         // no-op
     }
 
+    public void sendMessage(CommandSender sender, String msg) {
+        sender.sendMessage(PREFIX + msg);
+    }
+
     public void sendFormatterIfAllowed(Player player) {
         if (Util.hasPermission(player, "betterpreview.preview")) {
             sendFormatter(player);
         }
     }
-    private void sendFormatter(Player player) {
+    public void sendFormatter(Player player) {
         var buf = Unpooled.buffer();
         FormatterRegistry.write(buf, getFormatter(player).orElse(null));
         assert buf.hasArray();

@@ -5,7 +5,19 @@ main: com.tisawesomeness.betterpreview.spigot.BetterPreviewSpigot
 api-version: 1.19
 authors: [ Tis_awesomeness ]
 softdepend: [ EssentialsChat ]
+commands:
+  betterpreview:
+    description: "BetterPreview command"
+    aliases: [ bp, preview ]
 permissions:
+  betterpreview.*:
+    default: op
+    children:
+      betterpreview.preview: true
+      betterpreview.refresh: true
   betterpreview.preview:
     description: "Allows the user to use BetterPreview previews"
     default: true
+  betterpreview.refresh:
+    description: "Allows refreshing the user's preview"
+    default: op
