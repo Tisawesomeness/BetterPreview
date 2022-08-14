@@ -2,6 +2,7 @@ package com.tisawesomeness.betterpreview.spigot;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 
 public class Util {
 
@@ -16,7 +17,7 @@ public class Util {
      * @param permission the permission to check
      * @return whether the player has the permission
      */
-    public static boolean hasPermission(Player player, String permission) {
+    public static boolean hasPermission(Permissible player, String permission) {
         String perm = permission;
         String permToCheck = permission;
         int idx;

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 public class BetterPreviewSpigot extends JavaPlugin {
 
@@ -64,6 +65,18 @@ public class BetterPreviewSpigot extends JavaPlugin {
             return Optional.empty();
         }
         return adapter.buildChatFormatter(player);
+    }
+
+    public @Nullable Player getPlayer(String playerNameOrUUID) {
+        // Longer usernames are not allowed in (at least) 1.19
+        if (playerNameOrUUID.length() <= 16) {
+            return getServer().getPlayer(playerNameOrUUID);
+        }
+        try {
+            return getServer().getPlayer(UUID.fromString(playerNameOrUUID));
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
     }
 
 }

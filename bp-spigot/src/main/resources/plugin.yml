@@ -14,10 +14,19 @@ permissions:
     default: op
     children:
       betterpreview.preview: true
-      betterpreview.refresh: true
+      betterpreview.refresh.*: true
   betterpreview.preview:
     description: "Allows the user to use BetterPreview previews"
     default: true
+  betterpreview.refresh.*:
+    description: "Allows refreshing the user's preview"
+    default: op
+    children:
+      betterpreview.refresh: true
+      betterpreview.refresh.others: true
   betterpreview.refresh:
     description: "Allows refreshing the user's preview"
+    default: op
+  betterpreview.refresh.others:
+    description: "Allows refreshing the other players' preview"
     default: op
