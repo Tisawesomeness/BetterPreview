@@ -31,6 +31,8 @@ public class PreviewCommand implements CommandExecutor {
         plugin.sendMessage(sender, String.format("%sBetterPreview %sv%s", ChatColor.GOLD, ChatColor.GREEN, version));
         plugin.sendMessage(sender, String.format("/%s refresh %s[player] %s- Refresh chat formatting rules",
                 label, ChatColor.YELLOW, ChatColor.GOLD));
+        plugin.sendMessage(sender, String.format("/%s refresh * %s- Refresh all players' chat formatting rules",
+                label,  ChatColor.GOLD));
     }
 
     private void refreshSubcommand(CommandSender sender, String[] args) {
@@ -48,7 +50,12 @@ public class PreviewCommand implements CommandExecutor {
                 plugin.sendMessage(sender, ChatColor.RED + "You don't have permission to refresh preview for other players.");
                 return;
             }
-            targetPlayer = plugin.getPlayer(args[1]);
+            String playerArg = args[1];
+            if (playerArg.equals("*")) {
+                refreshAllSubcommand(sender);
+                return;
+            }
+            targetPlayer = plugin.getPlayer(playerArg);
             if (targetPlayer == null) {
                 plugin.sendMessage(sender, ChatColor.RED + "Player not found.");
                 return;
@@ -58,6 +65,16 @@ public class PreviewCommand implements CommandExecutor {
         }
         plugin.sendFormatter(targetPlayer);
         plugin.sendMessage(sender, "Refreshed preview.");
+    }
+    private void refreshAllSubcommand(CommandSender sender) {
+        if (!Util.hasPermission(sender, "betterpreview.refresh.all")) {
+            plugin.sendMessage(sender, ChatColor.RED + "You don't have permission to refresh preview for all players.");
+            return;
+        }
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            plugin.sendFormatter(player);
+        }
+        plugin.sendMessage(sender, "Refreshed all previews.");
     }
 
 }

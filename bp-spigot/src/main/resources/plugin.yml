@@ -24,9 +24,13 @@ permissions:
     children:
       betterpreview.refresh: true
       betterpreview.refresh.others: true
+      betterpreview.refresh.all: true
   betterpreview.refresh:
     description: "Allows refreshing the user's preview"
     default: op
   betterpreview.refresh.others:
     description: "Allows refreshing the other players' preview"
+    default: op
+  betterpreview.refresh.all:
+    description: "Allows refreshing all players' previews"
     default: op
