@@ -11,4 +11,5 @@ pluginManagement {
 include 'bp-core'
 include 'bp-fabric'
 include 'bp-fabric:1-19'
+include 'bp-fabric:1-19-1'
 include 'bp-spigot'

@@ -19,7 +19,7 @@ public class ChatPreviewerMixin {
         cir.setReturnValue(BetterPreviewClient.getPreview());
     }
 
-    // Always render preview
+    // Render preview only if BetterPreview allows
     @Inject(method = "shouldRenderPreview", at = @At("HEAD"), cancellable = true)
     private void shouldRenderPreview(CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(BetterPreview.shouldDisplayPreview());

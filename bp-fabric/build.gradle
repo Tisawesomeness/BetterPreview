@@ -1,5 +1,5 @@
 plugins {
-    id "fabric-loom" version "0.12-SNAPSHOT" apply false
+    id "fabric-loom" version "0.13-SNAPSHOT" apply false
 }
 
 allprojects {
@@ -20,6 +20,10 @@ allprojects {
         modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
         modImplementation include("net.kyori:adventure-platform-fabric:5.4.0-SNAPSHOT")
+    }
+
+    java {
+        withSourcesJar()
     }
 
     processResources {
@@ -44,6 +48,10 @@ subprojects.each {
     remapJar.dependsOn("${it.path}:remapJar")
 }
 
+// TODO Find a fix for the below
+// Requires running ":bp-fabric:1-19:build", ":bp-fabric:1-19-1:build", then ":bp-fabric:build" to build correctly
+// Running 1.19 and 1.19.1 builds in the same build (even sequentially) causes the build to run until all memory used
+
 dependencies {
     include project(":bp-core")
 
@@ -57,7 +65,6 @@ dependencies {
 
 java {
     archivesBaseName = rootProject.name + "-Fabric"
-    withSourcesJar()
 }
 
 jar {
