@@ -44,7 +44,7 @@ subprojects {
 }
 
 def outputTasks() {
-    [":bp-spigot:shadowJar", ":bp-fabric:remappedShadowJar"].stream().map({ tasks.findByPath(it) })
+    [":bp-spigot:shadowJar", ":bp-fabric:remapJar"].stream().map({ tasks.findByPath(it) })
 }
 
 task copyToOutput(type: Copy) {

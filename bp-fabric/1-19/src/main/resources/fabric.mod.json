@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "betterpreview",
+  "id": "betterpreview-1-19",
   "version": "${version}",
-  "name": "BetterPreview",
+  "name": "BetterPreview for 1.19",
   "description": "Chat preview without the privacy concerns",
   "authors": [ "Tis_awesomeness" ],
   "contact": {
@@ -12,17 +12,12 @@
   "license": "GPL-3.0",
   "icon": "assets/betterpreview/icon.png",
   "environment": "*",
-  "entrypoints": {
-    "main": [
-      "com.tisawesomeness.betterpreview.fabric.BetterPreviewFabric"
-    ],
-    "client": [
-      "com.tisawesomeness.betterpreview.fabric.BetterPreviewClient"
-    ]
-  },
+  "mixins": [
+    "betterpreview.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.14.8",
     "fabric": "*",
-    "minecraft": "1.19.x"
+    "minecraft": "1.19"
   }
 }

@@ -1,4 +1,4 @@
-package com.tisawesomeness.betterpreview.fabric.mixin;
+package com.tisawesomeness.betterpreview.fabric.mc119;
 
 import com.tisawesomeness.betterpreview.BetterPreview;
 import com.tisawesomeness.betterpreview.fabric.BetterPreviewClient;
