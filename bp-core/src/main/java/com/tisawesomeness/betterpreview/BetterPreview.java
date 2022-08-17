@@ -6,7 +6,8 @@ import com.tisawesomeness.betterpreview.format.NopFormatter;
 import lombok.Setter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class BetterPreview {
 

@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 import static com.tisawesomeness.betterpreview.ComponentAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ClassicFormatterTest {
+class ClassicFormatterTest {
 
     private static final ChatFormatter NORMAL = new ClassicFormatter('&');
     private static final ChatFormatter NONE = new ClassicFormatter('&', EnumSet.noneOf(ClassicFormat.class), false);

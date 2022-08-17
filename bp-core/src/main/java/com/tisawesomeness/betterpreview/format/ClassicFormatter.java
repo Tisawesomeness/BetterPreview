@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
@@ -17,7 +16,7 @@ public class ClassicFormatter implements ChatFormatter {
 
     private final char colorSymbol;
     // stored as an integer bit field in the packet
-    private final EnumSet<@NotNull ClassicFormat> allowedFormatting;
+    private final EnumSet<ClassicFormat> allowedFormatting;
     private final boolean rgbAllowed;
 
     /**
