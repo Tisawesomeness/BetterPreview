@@ -3,6 +3,7 @@ package com.tisawesomeness.betterpreview;
 import com.tisawesomeness.betterpreview.format.ChatFormatter;
 import com.tisawesomeness.betterpreview.format.NopFormatter;
 
+import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -20,23 +21,15 @@ public class BetterPreview {
     private static final ChatFormatter backupFormatter = new NopFormatter();
 
     @Setter private static @Nullable ChatFormatter chatFormatter;
-    private static String rawPreviewInput = "";
+    @Getter private static Component preview = Component.empty();
 
     /**
      * Updates the raw input used to generate the preview.
      * @param rawInput the raw string that the player typed in chat
      */
     public static void updateChatInput(String rawInput) {
-        rawPreviewInput = rawInput;
-    }
-
-    /**
-     * Formats the current raw input into a preview.
-     * @return the formatted preview
-     */
-    public static Component getPreview() {
         var formatter = chatFormatter == null ? backupFormatter : chatFormatter;
-        return formatter.format(rawPreviewInput).compact();
+        preview = formatter.format(rawInput).compact();
     }
 
     /**
