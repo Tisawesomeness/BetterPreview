@@ -14,4 +14,4 @@ More to come
 
 ## Building
 
-To build BetterPreview, run `gradle build`. The output jars are in the `build/libs` directory.
+To build BetterPreview, run `build.sh` or `build.bat`. The output jars are in the `build/libs` directory.
