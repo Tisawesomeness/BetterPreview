@@ -42,10 +42,6 @@ public class PreviewCommand implements CommandExecutor, TabCompleter {
     }
 
     private void refreshSubcommand(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
-            plugin.sendMessage(sender, ChatColor.RED + "Only players can use this command.");
-            return;
-        }
         if (!Util.hasPermission(sender, "betterpreview.refresh")) {
             plugin.sendMessage(sender, ChatColor.RED + "You don't have permission to refresh preview.");
             return;
@@ -67,8 +63,11 @@ public class PreviewCommand implements CommandExecutor, TabCompleter {
                 return;
             }
             targetPlayer = playerOpt.get();
-        } else {
+        } else if (sender instanceof Player) {
             targetPlayer = (Player) sender;
+        } else {
+            plugin.sendMessage(sender, ChatColor.RED + "Please specify a player.");
+            return;
         }
         plugin.updateFormatter(targetPlayer);
         plugin.sendMessage(sender, "Refreshed preview.");
