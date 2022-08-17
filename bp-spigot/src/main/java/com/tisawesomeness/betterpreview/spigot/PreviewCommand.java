@@ -61,15 +61,16 @@ public class PreviewCommand implements CommandExecutor, TabCompleter {
                 refreshAllSubcommand(sender);
                 return;
             }
-            targetPlayer = plugin.getPlayer(playerArg);
-            if (targetPlayer == null) {
+            var playerOpt = plugin.getPlayer(playerArg);
+            if (playerOpt.isEmpty()) {
                 plugin.sendMessage(sender, ChatColor.RED + "Player not found.");
                 return;
             }
+            targetPlayer = playerOpt.get();
         } else {
             targetPlayer = (Player) sender;
         }
-        plugin.sendFormatter(targetPlayer);
+        plugin.updateFormatter(targetPlayer);
         plugin.sendMessage(sender, "Refreshed preview.");
     }
     private void refreshAllSubcommand(CommandSender sender) {
@@ -78,7 +79,7 @@ public class PreviewCommand implements CommandExecutor, TabCompleter {
             return;
         }
         for (var player : plugin.getServer().getOnlinePlayers()) {
-            plugin.sendFormatter(player);
+            plugin.updateFormatter(player);
         }
         plugin.sendMessage(sender, "Refreshed all previews.");
     }

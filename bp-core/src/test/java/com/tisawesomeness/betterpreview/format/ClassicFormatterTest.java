@@ -195,6 +195,7 @@ public class ClassicFormatterTest {
         var buf = Unpooled.buffer();
         formatter.write(buf);
         assertThat(new ClassicFormatter(buf)).usingRecursiveComparison().isEqualTo(formatter);
+        assertThat(buf.isReadable()).isFalse();
     }
 
 }
