@@ -2,15 +2,15 @@ package com.tisawesomeness.betterpreview.spigot;
 
 import com.tisawesomeness.betterpreview.BetterPreview;
 import com.tisawesomeness.betterpreview.format.ChatFormatter;
-import com.tisawesomeness.betterpreview.format.FormatterRegistry;
 import com.tisawesomeness.betterpreview.network.ByteBufs;
+import com.tisawesomeness.betterpreview.network.ClientboundUpdate;
+import com.tisawesomeness.betterpreview.network.Packet;
 import com.tisawesomeness.betterpreview.spigot.adapter.EssentialsChatAdapter;
 import com.tisawesomeness.betterpreview.spigot.adapter.FormatAdapter;
 import com.tisawesomeness.betterpreview.spigot.network.ChannelListener;
-import com.tisawesomeness.betterpreview.spigot.network.MessageListener;
+import com.tisawesomeness.betterpreview.spigot.network.PacketListener;
 import com.tisawesomeness.betterpreview.spigot.network.PlayerStorage;
 
-import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,31 +45,12 @@ public class BetterPreviewSpigot extends JavaPlugin {
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, UPDATE_CHANNEL);
         getServer().getMessenger().registerOutgoingPluginChannel(this, HELLO_CHANNEL);
-        getServer().getMessenger().registerIncomingPluginChannel(this, HELLO_CHANNEL, new MessageListener(this));
+        new PacketListener(this);
 
         getServer().getPluginManager().registerEvents(new ChannelListener(this), this);
         getServer().getPluginManager().registerEvents(new LeaveListener(this), this);
 
         Objects.requireNonNull(getCommand("betterpreview")).setExecutor(new PreviewCommand(this));
-    }
-
-    public void sendMessage(CommandSender sender, String msg) {
-        sender.sendMessage(PREFIX + msg);
-    }
-    public void sendPacket(Player player, String channel, ByteBuf buf) {
-        if (getLogger().isLoggable(Level.FINER)) {
-            getLogger().finer("Sending packet to " + player.getName() + " on channel " + channel +
-                    " with data " + buf + " " + Arrays.toString(ByteBufs.asArray(buf)));
-        } else {
-            getLogger().fine("Sending packet to " + player.getName() + " on channel " + channel);
-        }
-        player.sendPluginMessage(this, channel, ByteBufs.asArray(buf));
-    }
-
-    public void updateFormatter(Player player) {
-        var buf = ByteBufs.create();
-        FormatterRegistry.write(buf, getFormatter(player).orElse(null));
-        sendPacket(player, UPDATE_CHANNEL, buf);
     }
 
     public Optional<ChatFormatter> getFormatter(Player player) {
@@ -90,6 +70,30 @@ public class BetterPreviewSpigot extends JavaPlugin {
         } catch (IllegalArgumentException ignored) {
             return Optional.empty();
         }
+    }
+
+    public void sendMessage(CommandSender sender, String msg) {
+        sender.sendMessage(PREFIX + msg);
+    }
+
+    public void sendPacket(Player player, Packet packet) {
+        var buf = ByteBufs.create();
+        packet.write(buf);
+        String channel = packet.getChannel().asString();
+
+        if (getLogger().isLoggable(Level.FINER)) {
+            getLogger().finer(() -> "Sending packet to " + player.getName() + " on channel " + channel +
+                    " with data " + ByteBufs.debug(buf));
+        } else {
+            getLogger().fine(() -> "Sending packet to " + player.getName() + " on channel " + channel);
+        }
+
+        player.sendPluginMessage(this, channel, ByteBufs.asArray(buf));
+    }
+
+    public void updateFormatter(Player player) {
+        var packet = new ClientboundUpdate(getFormatter(player).orElse(null));
+        sendPacket(player, packet);
     }
 
 }

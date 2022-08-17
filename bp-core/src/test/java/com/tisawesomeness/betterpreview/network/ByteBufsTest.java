@@ -47,4 +47,19 @@ class ByteBufsTest {
         return Stream.of("*".repeat(256));
     }
 
+    @Test
+    public void testNullableStringAsEmpty() {
+        var buf = Unpooled.buffer();
+        ByteBufs.writeNullableStringAsEmpty(buf, null);
+        assertThat(ByteBufs.readNullableStringAsEmpty(buf)).isNull();
+        assertThat(buf.isReadable()).isFalse();
+    }
+    @Test
+    public void testNullableStringAsEmpty2() {
+        var buf = Unpooled.buffer();
+        ByteBufs.writeNullableStringAsEmpty(buf, "abc");
+        assertThat(ByteBufs.readNullableStringAsEmpty(buf)).isEqualTo("abc");
+        assertThat(buf.isReadable()).isFalse();
+    }
+
 }

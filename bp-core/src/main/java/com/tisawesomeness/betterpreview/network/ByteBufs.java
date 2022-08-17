@@ -3,6 +3,7 @@ package com.tisawesomeness.betterpreview.network;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -66,6 +67,26 @@ public class ByteBufs {
         String str = buf.toString(buf.readerIndex(), length, StandardCharsets.UTF_8);
         buf.readerIndex(buf.readerIndex() + length);
         return str;
+    }
+
+    public static void writeNullableStringAsEmpty(ByteBuf buf, @Nullable String str) {
+        writeString(buf, str == null ? "" : str);
+    }
+    public static @Nullable String readNullableStringAsEmpty(ByteBuf buf) {
+        String str = readString(buf);
+        return str.isEmpty() ? null : str;
+    }
+
+    public static String debug(ByteBuf buf) {
+        return "ByteBuf[readerIndex=" + buf.readerIndex() + ", writerIndex=" + buf.writerIndex() +
+                ", capacity=" + buf.capacity() + "data=" + asHex(buf) + "]";
+    }
+    public static String asHex(ByteBuf buf) {
+        var sb = new StringBuilder();
+        for (byte b : asArray(buf)) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 
 }

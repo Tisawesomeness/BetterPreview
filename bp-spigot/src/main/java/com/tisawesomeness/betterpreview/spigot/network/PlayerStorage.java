@@ -1,6 +1,5 @@
 package com.tisawesomeness.betterpreview.spigot.network;
 
-import com.tisawesomeness.betterpreview.network.ByteBufs;
 import com.tisawesomeness.betterpreview.network.ClientboundHello;
 import com.tisawesomeness.betterpreview.spigot.BetterPreviewSpigot;
 
@@ -48,15 +47,14 @@ public class PlayerStorage {
         }
         private void onChange(Player player) {
             if (version != null && registered) {
-                plugin.getLogger().fine(player.getName() + " data completed, sending hello packet");
+                plugin.getLogger().fine(() -> player.getName() + " data completed, sending hello packet");
                 sendHello(player);
             }
         }
         private void sendHello(Player player) {
             String version = plugin.getDescription().getVersion();
-            var buf = ByteBufs.create();
-            new ClientboundHello(version, plugin.getFormatter(player).orElse(null)).write(buf);
-            plugin.sendPacket(player, BetterPreviewSpigot.HELLO_CHANNEL, buf);
+            var packet = new ClientboundHello(version, plugin.getFormatter(player).orElse(null));
+            plugin.sendPacket(player, packet);
         }
     }
 
