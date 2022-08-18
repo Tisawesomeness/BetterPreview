@@ -20,6 +20,7 @@ import net.minecraft.text.Text;
 public class BetterPreviewClient implements ClientModInitializer {
 
     private static final FabricClientAudiences AUDIENCE = FabricClientAudiences.of();
+    private static final Text MESSAGE_PREFIX = AUDIENCE.toNative(BetterPreview.MESSAGE_PREFIX);
 
     @Override
     public void onInitializeClient() {
@@ -36,6 +37,11 @@ public class BetterPreviewClient implements ClientModInitializer {
 
     private static void disableFormatter(ClientPlayNetworkHandler clientPlayNetworkHandler, MinecraftClient minecraftClient) {
         BetterPreview.setChatFormatter(null);
+    }
+
+    public static void displayMessage(Text message) {
+        Text prefixedMessage = MESSAGE_PREFIX.copy().append(message);
+        MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(prefixedMessage);
     }
 
     public static Text getPreview() {

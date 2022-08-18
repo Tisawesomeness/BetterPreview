@@ -1,5 +1,6 @@
 package com.tisawesomeness.betterpreview.spigot.network;
 
+import com.tisawesomeness.betterpreview.SupportInfo;
 import com.tisawesomeness.betterpreview.network.ClientboundHello;
 import com.tisawesomeness.betterpreview.spigot.BetterPreviewSpigot;
 
@@ -53,7 +54,9 @@ public class PlayerStorage {
         }
         private void sendHello(Player player) {
             String version = plugin.getDescription().getVersion();
-            var packet = new ClientboundHello(version, plugin.getFormatterUpdate(player));
+            var supportInfo = SupportInfo.supported(version);
+            var update = plugin.getFormatterUpdate(player);
+            var packet = ClientboundHello.withUpdate(version, supportInfo, update);
             plugin.sendPacket(player, packet);
         }
     }

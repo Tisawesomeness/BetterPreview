@@ -14,7 +14,6 @@ import com.tisawesomeness.betterpreview.spigot.network.PlayerStorage;
 
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,9 +25,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class BetterPreviewSpigot extends JavaPlugin {
-
-    private static final String PREFIX = ChatColor.GRAY + "[" + ChatColor.GREEN + "BP" +
-            ChatColor.GRAY + "]" + ChatColor.RESET + " ";
 
     public static final String HELLO_CHANNEL = BetterPreview.HELLO_CHANNEL.asString();
     public static final String UPDATE_CHANNEL = BetterPreview.UPDATE_CHANNEL.asString();
@@ -75,7 +71,7 @@ public class BetterPreviewSpigot extends JavaPlugin {
     }
 
     public void sendMessage(CommandSender sender, String msg) {
-        sender.sendMessage(PREFIX + msg);
+        sender.sendMessage(BetterPreview.MESSAGE_PREFIX_RAW + msg);
     }
 
     public void sendPacket(Player player, Packet packet) {

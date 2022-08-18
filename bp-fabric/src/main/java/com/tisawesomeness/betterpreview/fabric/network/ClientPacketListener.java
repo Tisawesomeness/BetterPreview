@@ -1,6 +1,10 @@
 package com.tisawesomeness.betterpreview.fabric.network;
 
 import com.tisawesomeness.betterpreview.BetterPreview;
+import com.tisawesomeness.betterpreview.SupportInfo;
+import com.tisawesomeness.betterpreview.SupportStatus;
+import com.tisawesomeness.betterpreview.fabric.BetterPreviewClient;
+import com.tisawesomeness.betterpreview.fabric.BetterPreviewFabric;
 import com.tisawesomeness.betterpreview.format.FormatterStatus;
 import com.tisawesomeness.betterpreview.format.FormatterUpdate;
 import com.tisawesomeness.betterpreview.network.ClientboundHello;
@@ -16,6 +20,9 @@ import net.kyori.adventure.platform.fabric.FabricAudiences;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 @Log4j2
 @Environment(EnvType.CLIENT)
@@ -32,7 +39,13 @@ public class ClientPacketListener {
     private static void receiveHello(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
         var packet = new ClientboundHello(packetByteBuf);
         log.info("Received hello from server with version {}", packet.getServerVersion());
-        handleUpdate(packet.getUpdate());
+        var supportInfo = packet.getSupportInfo();
+        log.info("Server supports {}", supportInfo.getRequestedVersion());
+        if (supportInfo.getStatus().supportsPreviews()) {
+            handleUpdate(packet.getUpdate());
+        } else {
+            displayUnsupportedMessage(supportInfo);
+        }
     }
 
     private static void receiveUpdate(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
@@ -49,6 +62,30 @@ public class ClientPacketListener {
             BetterPreview.setChatFormatter(update.getFormatter().orElse(null));
         } catch (IllegalArgumentException e) {
             log.error(e);
+        }
+    }
+    private static void displayUnsupportedMessage(SupportInfo supportInfo) {
+        if (supportInfo.getStatus() == SupportStatus.NO_SUPPORT) {
+            MutableText message = Text.literal("BetterPreview is not supported on this server").formatted(Formatting.RED);
+            addReasonIfNeeded(supportInfo, message);
+            BetterPreviewClient.displayMessage(message);
+        } else {
+            MutableText outdatedMessage = Text.literal("Your version of BetterPreview (").formatted(Formatting.RED)
+                    .append(Text.literal(BetterPreviewFabric.getVersion()).formatted(Formatting.GOLD))
+                    .append(Text.literal(") is outdated").formatted(Formatting.RED));
+            addReasonIfNeeded(supportInfo, outdatedMessage);
+            BetterPreviewClient.displayMessage(outdatedMessage);
+
+            Text updateMessage = Text.literal("Please update to ").formatted(Formatting.RED)
+                    .append(Text.literal(supportInfo.getRequestedVersion()).formatted(Formatting.GOLD));
+            BetterPreviewClient.displayMessage(updateMessage);
+        }
+    }
+    private static void addReasonIfNeeded(SupportInfo supportInfo, MutableText message) {
+        var reasonOpt = supportInfo.getMessage();
+        if (reasonOpt.isPresent()) {
+            message.append(Text.literal(": ").formatted(Formatting.RED))
+                    .append(Text.literal(reasonOpt.get()).formatted(Formatting.DARK_RED));
         }
     }
 

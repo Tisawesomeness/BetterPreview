@@ -14,7 +14,6 @@ import java.util.Optional;
 public class FormatterUpdate {
     /** Either {@link FormatterStatus#OK} or the reason a formatter is disabled */
     @Getter private final FormatterStatus status;
-    /** The formatter to use, null for no formatter (if status OK) or disabled */
     private final @Nullable ChatFormatter formatter;
 
     public static FormatterUpdate enabled(@Nullable ChatFormatter formatter) {
@@ -39,6 +38,10 @@ public class FormatterUpdate {
         }
     }
 
+    /**
+     * Gets the formatter
+     * @return the formatter, or empty for no formatter (if status OK) or disabled (if status not OK)
+     */
     public Optional<ChatFormatter> getFormatter() {
         return Optional.ofNullable(formatter);
     }

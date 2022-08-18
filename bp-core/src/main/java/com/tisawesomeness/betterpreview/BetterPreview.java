@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.annotation.Nullable;
 
@@ -17,6 +19,14 @@ public class BetterPreview {
     public static final Key HELLO_CHANNEL = Key.key(NAMESPACE, "hello");
     /** Used to update formatter on change */
     public static final Key UPDATE_CHANNEL = Key.key(NAMESPACE, "update");
+
+    public static final Component MESSAGE_PREFIX = Component.join(JoinConfiguration.noSeparators(),
+            Component.text("[").color(NamedTextColor.GRAY),
+            Component.text("BP").color(NamedTextColor.GREEN),
+            Component.text("]").color(NamedTextColor.GRAY),
+            Component.text(" ")
+    );
+    public static final String MESSAGE_PREFIX_RAW = "§7[§aBP§7]§r ";
 
     private static final ChatFormatter backupFormatter = new NopFormatter();
 
