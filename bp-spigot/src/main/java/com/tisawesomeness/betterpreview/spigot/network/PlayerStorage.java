@@ -53,7 +53,7 @@ public class PlayerStorage {
         }
         private void sendHello(Player player) {
             String version = plugin.getDescription().getVersion();
-            var packet = new ClientboundHello(version, plugin.getFormatter(player).orElse(null));
+            var packet = new ClientboundHello(version, plugin.getFormatterUpdate(player));
             plugin.sendPacket(player, packet);
         }
     }

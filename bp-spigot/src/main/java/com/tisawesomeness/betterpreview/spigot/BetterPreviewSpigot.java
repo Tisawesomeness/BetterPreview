@@ -1,7 +1,8 @@
 package com.tisawesomeness.betterpreview.spigot;
 
 import com.tisawesomeness.betterpreview.BetterPreview;
-import com.tisawesomeness.betterpreview.format.ChatFormatter;
+import com.tisawesomeness.betterpreview.format.FormatterStatus;
+import com.tisawesomeness.betterpreview.format.FormatterUpdate;
 import com.tisawesomeness.betterpreview.network.ByteBufs;
 import com.tisawesomeness.betterpreview.network.ClientboundUpdate;
 import com.tisawesomeness.betterpreview.network.Packet;
@@ -53,11 +54,12 @@ public class BetterPreviewSpigot extends JavaPlugin {
         Objects.requireNonNull(getCommand("betterpreview")).setExecutor(new PreviewCommand(this));
     }
 
-    public Optional<ChatFormatter> getFormatter(Player player) {
-        if (adapter != null && Util.hasPermission(player, "betterpreview.preview")) {
-            return adapter.buildChatFormatter(player);
+    public FormatterUpdate getFormatterUpdate(Player player) {
+        if (!Util.hasPermission(player, "betterpreview.preview")) {
+            return FormatterUpdate.disabled(FormatterStatus.NO_PERMISSION);
         }
-        return Optional.empty();
+        var formatter = adapter == null ? null : adapter.buildChatFormatter(player).orElse(null);
+        return FormatterUpdate.enabled(formatter);
     }
 
     public Optional<Player> getPlayer(String playerNameOrUUID) {
@@ -92,7 +94,7 @@ public class BetterPreviewSpigot extends JavaPlugin {
     }
 
     public void updateFormatter(Player player) {
-        var packet = new ClientboundUpdate(getFormatter(player).orElse(null));
+        var packet = new ClientboundUpdate(getFormatterUpdate(player));
         sendPacket(player, packet);
     }
 

@@ -1,8 +1,11 @@
 package com.tisawesomeness.betterpreview.network;
 
+import com.tisawesomeness.betterpreview.format.FormatterStatus;
+
 import io.netty.buffer.Unpooled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -59,6 +62,15 @@ class ByteBufsTest {
         var buf = Unpooled.buffer();
         ByteBufs.writeNullableStringAsEmpty(buf, "abc");
         assertThat(ByteBufs.readNullableStringAsEmpty(buf)).isEqualTo("abc");
+        assertThat(buf.isReadable()).isFalse();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = FormatterStatus.class, names = {"OK", "UNKNOWN", "NO_PERMISSION"})
+    public void testEnum(FormatterStatus status) {
+        var buf = Unpooled.buffer();
+        ByteBufs.writeEnum(buf, status);
+        assertThat(ByteBufs.readEnum(buf, FormatterStatus.class)).isEqualTo(status);
         assertThat(buf.isReadable()).isFalse();
     }
 

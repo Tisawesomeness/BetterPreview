@@ -1,6 +1,8 @@
 package com.tisawesomeness.betterpreview.fabric.network;
 
 import com.tisawesomeness.betterpreview.BetterPreview;
+import com.tisawesomeness.betterpreview.format.FormatterStatus;
+import com.tisawesomeness.betterpreview.format.FormatterUpdate;
 import com.tisawesomeness.betterpreview.network.ClientboundHello;
 import com.tisawesomeness.betterpreview.network.ClientboundUpdate;
 
@@ -30,14 +32,21 @@ public class ClientPacketListener {
     private static void receiveHello(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
         var packet = new ClientboundHello(packetByteBuf);
         log.info("Received hello from server with version {}", packet.getServerVersion());
-        BetterPreview.setChatFormatter(packet.getFormatter().orElse(null));
+        handleUpdate(packet.getUpdate());
     }
 
     private static void receiveUpdate(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
         var packet = new ClientboundUpdate(packetByteBuf);
-        log.debug("Received update from server, has formatter? {}", packet.getFormatter().isPresent());
+        handleUpdate(packet.getUpdate());
+    }
+
+    private static void handleUpdate(FormatterUpdate update) {
+        log.debug("Received update from server");
+        if (update.getStatus() != FormatterStatus.OK) {
+            log.info("Preview is disabled: {}", update.getStatus());
+        }
         try {
-            BetterPreview.setChatFormatter(packet.getFormatter().orElse(null));
+            BetterPreview.setChatFormatter(update.getFormatter().orElse(null));
         } catch (IllegalArgumentException e) {
             log.error(e);
         }

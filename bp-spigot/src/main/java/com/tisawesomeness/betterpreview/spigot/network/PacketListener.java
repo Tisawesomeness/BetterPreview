@@ -1,6 +1,7 @@
 package com.tisawesomeness.betterpreview.spigot.network;
 
 import com.tisawesomeness.betterpreview.network.ByteBufs;
+import com.tisawesomeness.betterpreview.network.ServerboundHello;
 import com.tisawesomeness.betterpreview.spigot.BetterPreviewSpigot;
 
 import io.netty.buffer.ByteBuf;
@@ -33,7 +34,8 @@ public class PacketListener implements PluginMessageListener {
     }
 
     private void receiveHello(Player player, ByteBuf buf) {
-        String version = ByteBufs.readString(buf);
+        var packet = new ServerboundHello(buf);
+        String version = packet.getClientVersion();
         plugin.getLogger().fine(() -> "Received C2S hello from " + player.getName() + " with version " + version);
         plugin.getPlayerStorage().acceptVersion(player, version);
     }

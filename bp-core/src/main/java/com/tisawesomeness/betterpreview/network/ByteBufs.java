@@ -69,6 +69,18 @@ public class ByteBufs {
         return str;
     }
 
+    public static void writeEnum(ByteBuf buf, Enum<?> value) {
+        writeVarInt(buf, value.ordinal());
+    }
+    public static <T extends Enum<T>> T readEnum(ByteBuf buf, Class<T> enumClass) {
+        int ordinal = readVarInt(buf);
+        T[] values = enumClass.getEnumConstants();
+        if (ordinal < 0 || values.length <= ordinal) {
+            throw new IllegalArgumentException("Invalid ordinal: " + ordinal);
+        }
+        return values[ordinal];
+    }
+
     public static void writeNullableStringAsEmpty(ByteBuf buf, @Nullable String str) {
         writeString(buf, str == null ? "" : str);
     }

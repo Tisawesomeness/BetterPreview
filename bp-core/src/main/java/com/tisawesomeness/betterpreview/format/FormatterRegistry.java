@@ -1,5 +1,7 @@
 package com.tisawesomeness.betterpreview.format;
 
+import com.tisawesomeness.betterpreview.network.ByteBufs;
+
 import io.netty.buffer.ByteBuf;
 
 import javax.annotation.Nullable;
@@ -10,12 +12,10 @@ import java.util.*;
  */
 public class FormatterRegistry {
 
-    private static final Map<Class<? extends ChatFormatter>, Byte> formatterToId = new HashMap<>();
+    private static final Map<Class<? extends ChatFormatter>, Integer> formatterToId = new HashMap<>();
     // index is id
     private static final List<FormatterReader> formatters = new ArrayList<>();
 
-    // limited to 127 formatters, ids 0-126 (1-127 in packet)
-    // should be way more than enough
     // must keep order when updating to a new version
     static {
         // id 0 for no formatter
@@ -24,8 +24,7 @@ public class FormatterRegistry {
     }
 
     private static void register(Class<? extends ChatFormatter> clazz, FormatterReader reader) {
-        assert formatters.size() <= Byte.MAX_VALUE - 1;
-        byte id = (byte) (formatters.size() + 1);
+        int id = formatters.size() + 1; // Add 1 to account for 0 id
         formatters.add(reader);
         formatterToId.put(clazz, id);
     }
@@ -37,15 +36,14 @@ public class FormatterRegistry {
      * @throws IllegalArgumentException if the formatter id is invalid
      */
     public static Optional<ChatFormatter> read(ByteBuf buf) {
-        byte id = buf.readByte();
+        int id = ByteBufs.readVarInt(buf);
         if (id == 0) {
             return Optional.empty();
         }
-        int idx = id - 1;
-        assert formatters.size() <= Byte.MAX_VALUE - 1;
-        if (idx >= formatters.size()) {
+        if (id < 0 || formatters.size() < id) {
             throw new IllegalArgumentException("Invalid formatter id: " + id);
         }
+        int idx = id - 1;
         return Optional.of(formatters.get(idx).read(buf));
     }
 
@@ -56,10 +54,10 @@ public class FormatterRegistry {
      */
     public static void write(ByteBuf buf, @Nullable ChatFormatter formatter) {
         if (formatter == null) {
-            buf.writeByte(0);
+            ByteBufs.writeVarInt(buf, 0);
         } else {
-            byte id = formatterToId.get(formatter.getClass());
-            buf.writeByte(id);
+            int id = formatterToId.get(formatter.getClass());
+            ByteBufs.writeVarInt(buf, id);
             formatter.write(buf);
         }
     }
