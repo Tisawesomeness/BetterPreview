@@ -3,6 +3,7 @@ package com.tisawesomeness.betterpreview.network;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 
@@ -62,7 +63,7 @@ public class ByteBufs {
     public static void writeString(ByteBuf buf, String str) {
         writeString(buf, str, MAX_LENGTH);
     }
-    public static void writeString(ByteBuf buf, String str, int maxLength) {
+    public static void writeString(ByteBuf buf, String str, @Nonnegative int maxLength) {
         if (str.length() > maxLength) {
             throw new IllegalArgumentException("String too long: " + str.length() + " > " + maxLength);
         }
@@ -73,7 +74,7 @@ public class ByteBufs {
     public static String readString(ByteBuf buf) {
         return readString(buf, MAX_LENGTH);
     }
-    public static String readString(ByteBuf buf, int maxLength) {
+    public static String readString(ByteBuf buf, @Nonnegative int maxLength) {
         int length = readVarInt(buf);
         // A java character can be encoded as up to 3 bytes.
         // 4-byte characters exist in UTF-8 but java sees them as two characters
@@ -95,13 +96,13 @@ public class ByteBufs {
     public static void writeNullableStringAsEmpty(ByteBuf buf, @Nullable String str) {
         writeNullableStringAsEmpty(buf, str, MAX_LENGTH);
     }
-    public static void writeNullableStringAsEmpty(ByteBuf buf, @Nullable String str, int maxLength) {
+    public static void writeNullableStringAsEmpty(ByteBuf buf, @Nullable String str, @Nonnegative int maxLength) {
         writeString(buf, str == null ? "" : str, maxLength);
     }
     public static @Nullable String readNullableStringAsEmpty(ByteBuf buf) {
         return readNullableStringAsEmpty(buf, MAX_LENGTH);
     }
-    public static @Nullable String readNullableStringAsEmpty(ByteBuf buf, int maxLength) {
+    public static @Nullable String readNullableStringAsEmpty(ByteBuf buf, @Nonnegative int maxLength) {
         String str = readString(buf, maxLength);
         return str.isEmpty() ? null : str;
     }

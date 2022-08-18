@@ -1,4 +1,2 @@
-@ParametersAreNonnullByDefault
+@AllNonnullByDefault
 package com.tisawesomeness.betterpreview;
-
-import javax.annotation.ParametersAreNonnullByDefault;

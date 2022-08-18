@@ -29,7 +29,7 @@ public class EssentialsChatAdapter implements FormatAdapter {
             allowedFormatting.addAll(ClassicFormat.ALL_COLOR_FORMATS);
         }
         for (var color : ClassicFormat.ALL_COLOR_FORMATS) {
-            String perm = BASE_PERMISSION + "." + color.toString();
+            String perm = BASE_PERMISSION + "." + color;
             if (player.isPermissionSet(perm)) {
                 if (Util.hasPermission(player, perm)) {
                     allowedFormatting.add(color);

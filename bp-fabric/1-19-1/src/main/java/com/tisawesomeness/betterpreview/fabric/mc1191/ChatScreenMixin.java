@@ -34,6 +34,7 @@ public class ChatScreenMixin {
     // Update mod preview text on each chat field update
     @Inject(method = "updatePreviewer", at = @At("HEAD"))
     private void updatePreviewer(String chatText, CallbackInfo ci) {
+        @SuppressWarnings("ConstantConditions")
         String normalized = ((ChatScreen) (Object) this).normalize(chatText);
         BetterPreview.updateChatInput(normalized);
     }
