@@ -33,14 +33,14 @@ public class ClientboundHello implements Packet {
     }
 
     public ClientboundHello(ByteBuf buf) {
-        serverVersion = ByteBufs.readString(buf);
+        serverVersion = ByteBufs.readString(buf, BetterPreview.MAX_VERSION_LENGTH);
         supportInfo = new SupportInfo(buf);
         update = supportInfo.getStatus().supportsPreviews() ? new FormatterUpdate(buf) : null;
     }
 
     @Override
     public void write(ByteBuf buf) {
-        ByteBufs.writeString(buf, serverVersion);
+        ByteBufs.writeString(buf, serverVersion, BetterPreview.MAX_VERSION_LENGTH);
         supportInfo.write(buf);
         if (supportInfo.getStatus().supportsPreviews()) {
             assert update != null;

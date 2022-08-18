@@ -30,13 +30,13 @@ public class SupportInfo {
 
     public SupportInfo(ByteBuf buf) {
         status = ByteBufs.readEnum(buf, SupportStatus.class);
-        requestedVersion = ByteBufs.readString(buf);
+        requestedVersion = ByteBufs.readString(buf, BetterPreview.MAX_VERSION_LENGTH);
         message = status == SupportStatus.FULL_SUPPORT ? null : ByteBufs.readNullableStringAsEmpty(buf);
     }
 
     public void write(ByteBuf buf) {
         ByteBufs.writeEnum(buf, status);
-        ByteBufs.writeString(buf, requestedVersion);
+        ByteBufs.writeString(buf, requestedVersion, BetterPreview.MAX_VERSION_LENGTH);
         if (status != SupportStatus.FULL_SUPPORT) {
             ByteBufs.writeNullableStringAsEmpty(buf, message);
         }

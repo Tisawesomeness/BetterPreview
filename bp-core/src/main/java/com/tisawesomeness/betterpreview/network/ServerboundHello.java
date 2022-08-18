@@ -12,12 +12,12 @@ public class ServerboundHello implements Packet {
     @Getter private final String clientVersion;
 
     public ServerboundHello(ByteBuf buf) {
-        clientVersion = ByteBufs.readString(buf);
+        clientVersion = ByteBufs.readString(buf, BetterPreview.MAX_VERSION_LENGTH);
     }
 
     @Override
     public void write(ByteBuf buf) {
-        ByteBufs.writeString(buf, clientVersion);
+        ByteBufs.writeString(buf, clientVersion, BetterPreview.MAX_VERSION_LENGTH);
     }
 
     @Override

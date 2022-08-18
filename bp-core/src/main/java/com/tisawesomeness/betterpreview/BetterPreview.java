@@ -28,6 +28,8 @@ public class BetterPreview {
     );
     public static final String MESSAGE_PREFIX_RAW = "§7[§aBP§7]§r ";
 
+    public static final int MAX_VERSION_LENGTH = 127;
+
     private static final ChatFormatter backupFormatter = new NopFormatter();
 
     @Setter private static @Nullable ChatFormatter chatFormatter;

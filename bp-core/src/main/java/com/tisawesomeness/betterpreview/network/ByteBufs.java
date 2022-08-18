@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
  */
 public class ByteBufs {
 
+    private static final int MAX_LENGTH = 32767;
+
     public static ByteBuf create() {
         return Unpooled.buffer();
     }
@@ -50,7 +52,7 @@ public class ByteBufs {
             value |= (b & 127) << i * 7;
             i++;
             if (i > 5) {
-                throw new RuntimeException("VarInt too big");
+                throw new IllegalArgumentException("var int was too big");
             }
         } while ((b & 128) == 128);
 
@@ -58,15 +60,50 @@ public class ByteBufs {
     }
 
     public static void writeString(ByteBuf buf, String str) {
+        writeString(buf, str, MAX_LENGTH);
+    }
+    public static void writeString(ByteBuf buf, String str, int maxLength) {
+        if (str.length() > maxLength) {
+            throw new IllegalArgumentException("String too long: " + str.length() + " > " + maxLength);
+        }
         byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
         writeVarInt(buf, bytes.length);
         buf.writeBytes(bytes);
     }
     public static String readString(ByteBuf buf) {
+        return readString(buf, MAX_LENGTH);
+    }
+    public static String readString(ByteBuf buf, int maxLength) {
         int length = readVarInt(buf);
+        // A java character can be encoded as up to 3 bytes.
+        // 4-byte characters exist in UTF-8 but java sees them as two characters
+        int maxEncodedLength = maxLength * 3;
+        if (length > maxEncodedLength) {
+            throw new IllegalArgumentException("Encoded string too long: " + length + " > " + maxEncodedLength);
+        }
+        if (length < 0) {
+            throw new IllegalArgumentException("String length cannot be negative: " + length);
+        }
         String str = buf.toString(buf.readerIndex(), length, StandardCharsets.UTF_8);
+        if (str.length() > maxLength) {
+            throw new IllegalArgumentException("String too long: " + str.length() + " > " + maxLength);
+        }
         buf.readerIndex(buf.readerIndex() + length);
         return str;
+    }
+
+    public static void writeNullableStringAsEmpty(ByteBuf buf, @Nullable String str) {
+        writeNullableStringAsEmpty(buf, str, MAX_LENGTH);
+    }
+    public static void writeNullableStringAsEmpty(ByteBuf buf, @Nullable String str, int maxLength) {
+        writeString(buf, str == null ? "" : str, maxLength);
+    }
+    public static @Nullable String readNullableStringAsEmpty(ByteBuf buf) {
+        return readNullableStringAsEmpty(buf, MAX_LENGTH);
+    }
+    public static @Nullable String readNullableStringAsEmpty(ByteBuf buf, int maxLength) {
+        String str = readString(buf, maxLength);
+        return str.isEmpty() ? null : str;
     }
 
     public static void writeEnum(ByteBuf buf, Enum<?> value) {
@@ -81,17 +118,9 @@ public class ByteBufs {
         return values[ordinal];
     }
 
-    public static void writeNullableStringAsEmpty(ByteBuf buf, @Nullable String str) {
-        writeString(buf, str == null ? "" : str);
-    }
-    public static @Nullable String readNullableStringAsEmpty(ByteBuf buf) {
-        String str = readString(buf);
-        return str.isEmpty() ? null : str;
-    }
-
     public static String debug(ByteBuf buf) {
         return "ByteBuf[readerIndex=" + buf.readerIndex() + ", writerIndex=" + buf.writerIndex() +
-                ", capacity=" + buf.capacity() + "data=" + asHex(buf) + "]";
+                ", capacity=" + buf.capacity() + ", data=" + asHex(buf) + "]";
     }
     public static String asHex(ByteBuf buf) {
         var sb = new StringBuilder();
