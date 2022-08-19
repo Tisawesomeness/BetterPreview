@@ -6,7 +6,7 @@ Must be installed on both client and server to work. Currently supports Fabric c
 
 Check the [docs](https://github.com/Tisawesomeness/BetterPreview/wiki) for a list of commands and permissions.
 
-**Minecraft Version:** 1.19
+**Minecraft Version:** 1.19 - 1.19.2
 
 ## Supported Chat Plugins
 
