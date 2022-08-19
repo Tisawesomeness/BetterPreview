@@ -3,7 +3,7 @@
   "id": "betterpreview-1-19",
   "version": "${version}",
   "name": "BetterPreview for 1.19",
-  "description": "Chat preview without the privacy concerns",
+  "description": "BetterPreview implementation for 1.19",
   "authors": [ "Tis_awesomeness" ],
   "contact": {
     "sources": "https://github.com/Tisawesomeness/BetterPreview",
@@ -19,5 +19,10 @@
     "fabric-networking-api-v1": "*",
     "minecraft": "1.19",
     "java": ">=17"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "betterpreview"
+    }
   }
 }
