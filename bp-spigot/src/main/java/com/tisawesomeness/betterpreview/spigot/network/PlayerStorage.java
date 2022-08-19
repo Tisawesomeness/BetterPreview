@@ -1,7 +1,5 @@
 package com.tisawesomeness.betterpreview.spigot.network;
 
-import com.tisawesomeness.betterpreview.SupportInfo;
-import com.tisawesomeness.betterpreview.network.ClientboundHello;
 import com.tisawesomeness.betterpreview.spigot.BetterPreviewSpigot;
 
 import lombok.AllArgsConstructor;
@@ -49,15 +47,8 @@ public class PlayerStorage {
         private void onChange(Player player) {
             if (version != null && registered) {
                 plugin.getLogger().fine(() -> player.getName() + " data completed, sending hello packet");
-                sendHello(player);
+                plugin.sendHello(player);
             }
-        }
-        private void sendHello(Player player) {
-            String version = plugin.getDescription().getVersion();
-            var supportInfo = SupportInfo.supported(version);
-            var update = plugin.getFormatterUpdate(player);
-            var packet = ClientboundHello.withUpdate(version, supportInfo, update);
-            plugin.sendPacket(player, packet);
         }
     }
 

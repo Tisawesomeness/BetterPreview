@@ -1,9 +1,11 @@
 package com.tisawesomeness.betterpreview.spigot;
 
 import com.tisawesomeness.betterpreview.BetterPreview;
+import com.tisawesomeness.betterpreview.SupportInfo;
 import com.tisawesomeness.betterpreview.format.FormatterStatus;
 import com.tisawesomeness.betterpreview.format.FormatterUpdate;
 import com.tisawesomeness.betterpreview.network.ByteBufs;
+import com.tisawesomeness.betterpreview.network.ClientboundHello;
 import com.tisawesomeness.betterpreview.network.ClientboundUpdate;
 import com.tisawesomeness.betterpreview.network.Packet;
 import com.tisawesomeness.betterpreview.spigot.adapter.EssentialsChatAdapter;
@@ -46,11 +48,25 @@ public class BetterPreviewSpigot extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new ChannelListener(this), this);
         getServer().getPluginManager().registerEvents(new LeaveListener(this), this);
+        getServer().getPluginManager().registerEvents(new LoadListener(this), this);
 
         Objects.requireNonNull(getCommand("betterpreview")).setExecutor(new PreviewCommand(this));
     }
 
-    public FormatterUpdate getFormatterUpdate(Player player) {
+    public void sendHello(Player player) {
+        String version = getDescription().getVersion();
+        var supportInfo = SupportInfo.supported(version);
+        var update = getFormatterUpdate(player);
+        var packet = ClientboundHello.withUpdate(version, supportInfo, update);
+        sendPacket(player, packet);
+    }
+
+    public void updateFormatter(Player player) {
+        var packet = new ClientboundUpdate(getFormatterUpdate(player));
+        sendPacket(player, packet);
+    }
+
+    private FormatterUpdate getFormatterUpdate(Player player) {
         if (!Util.hasPermission(player, "betterpreview.preview")) {
             return FormatterUpdate.disabled(FormatterStatus.NO_PERMISSION);
         }
@@ -87,11 +103,6 @@ public class BetterPreviewSpigot extends JavaPlugin {
         }
 
         player.sendPluginMessage(this, channel, ByteBufs.asArray(buf));
-    }
-
-    public void updateFormatter(Player player) {
-        var packet = new ClientboundUpdate(getFormatterUpdate(player));
-        sendPacket(player, packet);
     }
 
 }
