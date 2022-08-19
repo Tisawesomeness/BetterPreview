@@ -9,6 +9,8 @@ commands:
   betterpreview:
     description: "BetterPreview command"
     aliases: [ bp, preview ]
+    permission: betterpreview.info
+    permission-message: "§cYou do not have permission to use this command."
 permissions:
   betterpreview.*:
     default: op
@@ -28,6 +30,8 @@ permissions:
   betterpreview.refresh:
     description: "Allows refreshing the user's preview"
     default: op
+    children:
+      betterpreview.info: true
   betterpreview.refresh.others:
     description: "Allows refreshing the other players' preview"
     default: op
