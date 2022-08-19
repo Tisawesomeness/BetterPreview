@@ -10,7 +10,6 @@
     "issues": "https://github.com/Tisawesomeness/BetterPreview/issues"
   },
   "license": "GPL-3.0",
-  "icon": "assets/betterpreview/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
