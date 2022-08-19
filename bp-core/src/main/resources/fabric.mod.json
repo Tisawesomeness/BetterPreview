@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "betterpreview-core",
+  "version": "${version}",
+  "name": "BetterPreview Core",
+  "description": "BetterPreview core cross-platform library",
+  "authors": [ "Tis_awesomeness" ],
+  "contact": {
+    "sources": "https://github.com/Tisawesomeness/BetterPreview",
+    "issues": "https://github.com/Tisawesomeness/BetterPreview/issues"
+  },
+  "license": "GPL-3.0",
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ],
+      "parent": "betterpreview"
+    }
+  }
+}

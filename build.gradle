@@ -42,6 +42,15 @@ subprojects {
             toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
         }
     }
+
+    processResources {
+        inputs.property "version", project.version
+        filteringCharset "UTF-8"
+
+        filesMatching("fabric.mod.json") {
+            expand "version": project.version
+        }
+    }
 }
 
 def outputTasks() {
