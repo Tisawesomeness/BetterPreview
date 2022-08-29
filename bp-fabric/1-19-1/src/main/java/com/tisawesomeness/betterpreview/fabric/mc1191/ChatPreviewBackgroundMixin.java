@@ -1,6 +1,6 @@
 package com.tisawesomeness.betterpreview.fabric.mc1191;
 
-import com.tisawesomeness.betterpreview.BetterPreview;
+import com.tisawesomeness.betterpreview.fabric.BetterPreviewClient;
 
 import net.minecraft.client.gui.screen.ChatPreviewBackground;
 import net.minecraft.text.Text;
@@ -15,7 +15,7 @@ public class ChatPreviewBackgroundMixin {
     // Render preview only if BetterPreview allows
     @Inject(method = "computeRenderData", at = @At("HEAD"), cancellable = true)
     private void computeRenderData(long currentTime, Text previewText, CallbackInfoReturnable<ChatPreviewBackground.RenderData> cir) {
-        if (!BetterPreview.shouldDisplayPreview()) {
+        if (!BetterPreviewClient.shouldDisplayPreview()) {
             cir.setReturnValue(ChatPreviewBackground.RenderData.EMPTY);
         }
     }

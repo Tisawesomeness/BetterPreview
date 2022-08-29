@@ -1,6 +1,5 @@
 package com.tisawesomeness.betterpreview.fabric.mc119;
 
-import com.tisawesomeness.betterpreview.BetterPreview;
 import com.tisawesomeness.betterpreview.fabric.BetterPreviewClient;
 
 import net.minecraft.client.network.ChatPreviewer;
@@ -22,7 +21,7 @@ public class ChatPreviewerMixin {
     // Render preview only if BetterPreview allows
     @Inject(method = "shouldRenderPreview", at = @At("HEAD"), cancellable = true)
     private void shouldRenderPreview(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(BetterPreview.shouldDisplayPreview());
+        cir.setReturnValue(BetterPreviewClient.shouldDisplayPreview());
     }
 
 }

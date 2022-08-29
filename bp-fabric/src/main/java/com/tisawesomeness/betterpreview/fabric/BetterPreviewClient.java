@@ -24,6 +24,7 @@ public class BetterPreviewClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        ModConfig.init();
         ClientPacketListener.init();
         ClientPlayConnectionEvents.JOIN.register(BetterPreviewClient::sendHello);
         ClientPlayConnectionEvents.DISCONNECT.register(BetterPreviewClient::disableFormatter);
@@ -46,6 +47,9 @@ public class BetterPreviewClient implements ClientModInitializer {
 
     public static Text getPreview() {
         return AUDIENCE.toNative(BetterPreview.getPreview());
+    }
+    public static boolean shouldDisplayPreview() {
+        return ModConfig.getInstance().displayPreviews && BetterPreview.shouldDisplayPreview();
     }
 
 }

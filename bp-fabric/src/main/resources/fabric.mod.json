@@ -17,6 +17,9 @@
     ],
     "client": [
       "com.tisawesomeness.betterpreview.fabric.BetterPreviewClient"
+    ],
+    "modmenu": [
+      "com.tisawesomeness.betterpreview.fabric.ModMenuIntegration"
     ]
   },
   "depends": {
@@ -24,5 +27,8 @@
     "fabric-networking-api-v1": "*",
     "minecraft": "1.19.x",
     "java": ">=17"
+  },
+  "recommends": {
+    "modmenu": ">=3.0.0"
   }
 }
