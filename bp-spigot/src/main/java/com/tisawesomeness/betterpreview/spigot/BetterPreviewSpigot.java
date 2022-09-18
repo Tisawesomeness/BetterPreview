@@ -65,7 +65,7 @@ public class BetterPreviewSpigot extends JavaPlugin {
 
     public void sendHello(Player player) {
         String version = getDescription().getVersion();
-        var supportInfo = SupportInfo.supported(version);
+        var supportInfo = SupportInfo.supported("0.2.0");
         var update = getFormatterUpdate(player);
         var packet = ClientboundHello.withUpdate(version, supportInfo, update);
         sendPacket(player, packet);
