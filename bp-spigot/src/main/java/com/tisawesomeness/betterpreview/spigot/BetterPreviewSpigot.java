@@ -10,12 +10,12 @@ import com.tisawesomeness.betterpreview.network.ClientboundUpdate;
 import com.tisawesomeness.betterpreview.network.Packet;
 import com.tisawesomeness.betterpreview.spigot.adapter.EssentialsChatAdapter;
 import com.tisawesomeness.betterpreview.spigot.adapter.FormatAdapter;
+import com.tisawesomeness.betterpreview.spigot.adapter.LuckPermsChatAdapter;
 import com.tisawesomeness.betterpreview.spigot.network.ChannelListener;
 import com.tisawesomeness.betterpreview.spigot.network.PacketListener;
 import com.tisawesomeness.betterpreview.spigot.network.PlayerStorage;
 
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,11 +36,7 @@ public class BetterPreviewSpigot extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        boolean hasEssentialsChat = Bukkit.getPluginManager().getPlugin("EssentialsChat") != null;
-        if (hasEssentialsChat) {
-            adapter = new EssentialsChatAdapter();
-            getLogger().info("Found chat plugin: EssentialsChat");
-        }
+        adapter = findAdapter();
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, UPDATE_CHANNEL);
         getServer().getMessenger().registerOutgoingPluginChannel(this, HELLO_CHANNEL);
@@ -51,6 +47,20 @@ public class BetterPreviewSpigot extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new LoadListener(this), this);
 
         Objects.requireNonNull(getCommand("betterpreview")).setExecutor(new PreviewCommand(this));
+    }
+    private @Nullable FormatAdapter findAdapter() {
+        boolean hasEssentialsChat = getServer().getPluginManager().getPlugin("EssentialsChat") != null;
+        if (hasEssentialsChat) {
+            getLogger().info("Found chat plugin: EssentialsChat");
+            return new EssentialsChatAdapter();
+        }
+        boolean hasLuckPermsChat = getServer().getPluginManager().getPlugin("LPC") != null;
+        if (hasLuckPermsChat) {
+            getLogger().info("Found chat plugin: LPC");
+            return new LuckPermsChatAdapter();
+        }
+        getLogger().warning("No supported chat plugin found. Player previews will have no formatting.");
+        return null;
     }
 
     public void sendHello(Player player) {

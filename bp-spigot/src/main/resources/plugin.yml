@@ -4,7 +4,7 @@ description: "Chat preview without the privacy concerns"
 main: com.tisawesomeness.betterpreview.spigot.BetterPreviewSpigot
 api-version: 1.19
 authors: [ Tis_awesomeness ]
-softdepend: [ EssentialsChat ]
+softdepend: [ EssentialsChat, LPC ]
 commands:
   betterpreview:
     description: "BetterPreview command"

@@ -13,6 +13,7 @@ Check the [docs](https://github.com/Tisawesomeness/BetterPreview/wiki) for a lis
 ## Supported Chat Plugins
 
 - [EssentialsChat](https://essentialsx.net/)
+- [LuckPermsChat](https://www.spigotmc.org/resources/lpc-chat-formatter-1-7-10-1-19.68965/)
 
 More to come
 
