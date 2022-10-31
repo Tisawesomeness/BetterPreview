@@ -1,5 +1,7 @@
 # BetterPreview
 
+**NOTE: Snapshot [22w42a](https://www.minecraft.net/en-us/article/minecraft-snapshot-22w42a) removed chat preview for the upcoming 1.19.3 release. This project may be repurposed as a general-purpose chat formatting editor in the future.**
+
 Processes chat previews client-side to improve privacy, stability, and performance.
 
 Must be installed on both client and server to work. Currently supports Fabric clients and Spigot servers.
